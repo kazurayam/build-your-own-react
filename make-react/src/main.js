@@ -1,24 +1,41 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+function createElement(type, props, ...children) {
+    return {
+        type,
+        props: {
+            ...props,
+            children: children.map((child) =>
+                typeof child === "object" ? child: createTextElement(child)
+            )
+        },
+    };
+}
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+function createTextElement(text) {
+    return {
+        type: "TEXT_ELEMENT",
+        props: {
+            nodeValue: text,
+            children: [],
+        }
+    }
+}
 
-setupCounter(document.querySelector('#counter'))
+const element = createElement("h1", {title: "foo"}, "Hello");
+console.log(element)
+
+// idがrootの要素を取得
+const container = document.getElementById("root");
+
+// 新しい要素を作成(h1)
+const node = document.createElement("h1");
+
+// テキストノードを作成(Hello World!)
+const text = document.createTextNode("Hello World!")
+
+// テキストノードをh1要素に追加
+node.appendChild(text);
+
+// h1要素をroot要素に追加
+container.appendChild(node);
+
+// ReactDOM.render(element, container);
