@@ -20,22 +20,27 @@ function createTextElement(text) {
     }
 }
 
-const element = createElement("h1", {title: "foo"}, "Hello");
-console.log(element)
+function render(element, container) {
+    const dom = 
+        element.type === "TEXT_ELEMENT"
+            ? document.createTextNode(element.props.nodeValue)
+            : document.createElement(element.type);
+    
+    Object.keys(element.props)
+        .filter(key => key !== "children")
+        .forEach(name => {
+            dom[name] = element.props[name]
+        })
 
-// idがrootの要素を取得
-const container = document.getElementById("root");
+    element.props.children.forEach(child =>
+        render(child, dom)
+    )
+    container.appendChild(dom);
+}
 
-// 新しい要素を作成(h1)
-const node = document.createElement("h1");
+const MyReact = {
+    createElement,
+    render,
+}
 
-// テキストノードを作成(Hello World!)
-const text = document.createTextNode("Hello World!")
-
-// テキストノードをh1要素に追加
-node.appendChild(text);
-
-// h1要素をroot要素に追加
-container.appendChild(node);
-
-// ReactDOM.render(element, container);
+export default MyReact;
