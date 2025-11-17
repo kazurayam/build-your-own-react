@@ -46,10 +46,10 @@ function workLoop(deadline) {
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
         shouldYield = deadline.timeRemaining < 1;
     }
-    requestIdleCallback(workloop);
+    requestIdleCallback(workLoop);
 }
 
-requestIdelCallback(workloop);
+requestIdleCallback(workLoop);
 
 function performUnitOfWork(nextUnitOfWork) {
     // TODO
