@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 const config = defineConfig({
     esbuild: {
         jsxFactory: 'MyReact.createElement'
+    },
+    test: {
+        environment: 'jsdom',
     }
 });
 
