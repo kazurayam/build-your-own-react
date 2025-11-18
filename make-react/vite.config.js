@@ -6,6 +6,6 @@ const config = defineConfig({
     }
 });
 
-console.log(config)
+//console.log(config)
 
 export default config
