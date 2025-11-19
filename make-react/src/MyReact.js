@@ -1,4 +1,4 @@
-// src/MyReact.js
+// MyReact.js
 
 export function createElement(type, props, ...children) {
     return {
@@ -22,8 +22,7 @@ export function createTextElement(text) {
     }
 }
 
-// renderをcreateDomという関数に変更
-function createDom(fiber) {
+export function createDom(fiber) {
     const dom =
         fiber.type == "TEXT_ELEMENT"
             ? document.createTextNode(fiber.props.nodeValue)
