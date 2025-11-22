@@ -28,3 +28,6 @@ see src/add.test.ts
 $ npx vitest src/add.test.ts
 ```
 
+## vitestのなかでDOMを操作するコードをテストするにはDOMのAPIをmockしなければならない。そのためにはJSDOMを使う。
+
+To install JSDOM for Vitest in a Vite project, run the command npm install --save-dev jsdom vitest. Then, configure your Vitest setup by adding environment: 'jsdom' in your vite.config.ts file.

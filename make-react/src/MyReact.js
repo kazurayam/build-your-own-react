@@ -38,6 +38,13 @@ export function createDom(fiber) {
     return dom;
 }
 
+
+
+let nextUnitOfWork = null;
+let currentRoot = null;
+let wipRoot = null;
+// wip とは Work In Progress の頭字語
+
 function commitRoot() {
     commitWork(wipRoot.child);
     currentRoot = wipRoot;
@@ -63,10 +70,6 @@ function render(element, container) {
     };
     nextUnitOfWork = wipRoot;
 }
-
-let nextUnitOfWork = null;
-let currentRoot = null;
-let wipRoot = null;
 
 export function workLoop(deadline) {
     let shouldYield = false;
@@ -126,6 +129,8 @@ function performUnitOfWork(fiber) {
         nextFiber = nextFiber.parent;
     }
 }
+
+
 
 const MyReact = {
     createElement,
