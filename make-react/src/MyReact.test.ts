@@ -157,11 +157,16 @@ describe('createDom', () => {
         const dom = createDom(fiber);
         console.log("dom:\n" + JSON.stringify(domToJSON(dom), null, 2));
         expect(dom).not.toBeNull();
+        expect(dom.tagName).toBe("UL");
+        expect(dom.attributes['id'].value).toBe("my-list");
+        expect(dom['id']).toBe('my-list'); // DOM要素のidプロパティの値を検査
+        expect(dom.children).not.toBeNull();
+        expect(dom.children.length).toBe(0); // createDom関数が返すelementには子要素が無い
     });
 });
 
 /**
- * DOM要素をJSON.stringify()に渡しても {} が返ってくる。
+ * DOM要素をじかにJSON.stringify()の引数として渡すと {} が返ってくる。
  * JSON.stringify()はDOM要素を直にJSON化できるようには設計されていないから。
  * DOM要素をJavaScript Objectに変換する関数をカスタムに実装することが必要だ。
  * DOM要素をJavaScript Objectに変換したあとでそのObjectをJSON.stringifyに渡せ。

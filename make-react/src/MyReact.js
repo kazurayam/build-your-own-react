@@ -29,6 +29,7 @@ export function createDom(fiber) {
             : document.createElement(fiber.type);
     
     const isProperty = (key) => key !== "children";
+    console.log(fiber.props);
     Object.keys(fiber.props)
         .filter(isProperty)
         .forEach((name) => {
