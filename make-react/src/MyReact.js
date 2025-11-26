@@ -29,7 +29,7 @@ export function createDom(fiber) {
             : document.createElement(fiber.type);
     
     const isProperty = (key) => key !== "children";
-    console.log(fiber.props);
+    //console.log(fiber.props);
     Object.keys(fiber.props)
         .filter(isProperty)
         .forEach((name) => {
@@ -39,6 +39,50 @@ export function createDom(fiber) {
     return dom;
 }
 
+// Fiber作成の流れ
+export function performUnitOfWork(fiber) {
+    // 1. DOMを生成する
+    //console.log("fiber.dom: " + fiber.dom);
+    if (!fiber.dom) {
+        fiber.dom = createDom(fiber);
+    }
+    
+    // 2. 子要素としてのFiberノードを作成する
+    const elements = fiber.props.children;  // 子要素の配列を取得
+    let index = 0;
+    let prevSibling = null;     // 前の兄弟要素を追跡
+    while(index < elements.length) {
+        const element = elements[index];
+
+        const newFiber = {
+            type: element.type,
+            props: element.props,
+            parent: fiber,
+            dom: null,
+        };
+
+        if (index === 0) {
+            fiber.child = newFiber;     // 最初の子
+        } else {
+            prevSibling.sibling = newFiber;     // 兄弟としてつなげる
+        }
+
+        prevSibling = newFiber;
+        index++;
+    }
+    
+    // 3. 次の単位作業を返す
+    if (fiber.child) {
+        return fiber.child;
+    }
+    let nextFiber = fiber;
+    while(nextFiber) {
+        if (nextFiber.sibling) {
+            return nextFiber.sibling;
+        }
+        nextFiber = nextFiber.parent;
+    }
+}
 
 
 let nextUnitOfWork = null;
@@ -86,50 +130,6 @@ export function workLoop(deadline) {
     }
 }
 
-// Fiber作成の流れ
-function performUnitOfWork(fiber) {
-    // 1. DOMを生成する
-    if (!fiber.dom) {
-        fiber.dom = createDom(fiber);
-    }
-
-    // 2. Fiberノードを作成する
-    const elements = fiber.props.children;  // 子要素の配列を取得
-    let index = 0;
-    let prevSibling = null;     // 前の兄弟要素を追跡
-
-    while(index < elements.lendth) {
-        const element = elements[index];
-
-        const newFiber = {
-            type: element.type,
-            props: element.props,
-            parent: fiber,
-            dom: null,
-        };
-
-        if (index === 0) {
-            fiber.child = newFiber;     // 最初の子
-        } else {
-            prevSibling.sibling = newFiber;     // 兄弟としてつなげる
-        }
-
-        prevSibling = newFiber;
-        index++;
-    }
-    
-    // 3. 次の単位作業を返す
-    if (fiber.child) {
-        return fiber.child;
-    }
-    let nextFiber = fiber;
-    while(nextFiber) {
-        if (nextFiber.sibling) {
-            return nextFiber.sibling;
-        }
-        nextFiber = nextFiber.parent;
-    }
-}
 
 
 

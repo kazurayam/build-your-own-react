@@ -1,7 +1,17 @@
 // MyReact.test.ts
 
 import { describe, beforeEach, test, expect } from "vitest";
-import { createElement, createTextElement, createDom } from "./MyReact";
+import { createElement, createTextElement, createDom, performUnitOfWork } from "./MyReact";
+
+type ReactElement {
+    type: (x: number) => number | string,
+    props: {
+        className: string,
+        children: [],
+    }
+    key?: string
+    ref?: string
+}
 
 test('createTextElement', () => {
     expect(createTextElement("Hello, World!"))
@@ -155,7 +165,7 @@ describe('createDom', () => {
             );
         //console.log("fiber:\n" + JSON.stringify(fiber, null, 2))
         const dom = createDom(fiber);
-        console.log("dom:\n" + JSON.stringify(domToJSON(dom), null, 2));
+        //console.log("dom:\n" + JSON.stringify(domToJSON(dom), null, 2));
         expect(dom).not.toBeNull();
         expect(dom.tagName).toBe("UL");
         expect(dom.attributes['id'].value).toBe("my-list");
@@ -164,6 +174,7 @@ describe('createDom', () => {
         expect(dom.children.length).toBe(0); // createDom関数が返すelementには子要素が無い
     });
 });
+
 
 /**
  * DOM要素をじかにJSON.stringify()の引数として渡すと {} が返ってくる。
@@ -182,4 +193,51 @@ const domToJSON = (el: Element): Object => {
         children: Array.from(el.children).map(domToJSON),
         text: el.children.length === 0 ? el.textContent.trim() : null
     };
+}
+
+describe("performUnitOfWork", () => {
+    test("smoke", () => {
+        const rootFiber = 
+            createElement(
+                "div",
+                { "id": "root" },
+                null
+            );
+        const fiber = {
+            dom: createDom(rootFiber),
+            props: {
+                children: [
+                    {
+                        type: "h1",
+                        props: {
+                            title: "foo",
+                            children: [
+                                {
+                                    type: "TEXT_ELEMENT",
+                                    props: {
+                                        nodeValue: "Hello",
+                                        children: []
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+        const nextUnit = performUnitOfWork(fiber);
+        expect(nextUnit).not.toBeNull();
+        expect(nextUnit).not.toBeUndefined();
+        console.log(JSON.stringify(nextUnit, null, 2))
+    });
+});
+
+/**
+ * FiberをJSON.stringify()に直接渡してJSON型式の文字列に変換しようとしてもうまくいかない。
+ * Fiberの内部構造は再帰的なのでJSONモジュールが扱えないからだ。
+ * fiberToJSON関数はFiberを引数として受けて、再帰的な内部構造を除去して、JavaScript Objectに変換する。
+ * @param fiber 
+ */
+const fiberToJSON = (fiber: Fiber): Object => {
+
 }
